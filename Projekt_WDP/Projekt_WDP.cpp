@@ -152,7 +152,7 @@ int main()
 	al_destroy_display(disp);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
-
+	// nowy
 	return 0;
 
 }
