@@ -5,7 +5,7 @@
 
 int main()
 {
-
+	//komentarz
 	al_init();
 	al_install_keyboard();
 	al_set_new_display_flags(ALLEGRO_RESIZABLE);
@@ -49,8 +49,7 @@ int main()
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			koniec = true;
 		}
-		// TO JEST TEST GITHUBA
-		///wwwww
+
 
 
 		if (nowa_klatka && al_is_event_queue_empty(queue))
