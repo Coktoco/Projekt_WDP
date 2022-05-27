@@ -52,6 +52,8 @@ int main()
 		// TO JEST TEST GITHUBA
 		///wwwww
 
+		// WPROWADZAM KOLEJNA ZMIANE DO TESTOW
+
 
 		if (nowa_klatka && al_is_event_queue_empty(queue))
 		{
