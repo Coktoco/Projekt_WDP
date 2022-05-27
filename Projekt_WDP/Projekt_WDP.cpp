@@ -6,6 +6,7 @@
 int main()
 {
 
+	// OMG KOLEJNY TEST
 	al_init();
 	al_install_keyboard();
 	al_set_new_display_flags(ALLEGRO_RESIZABLE);
@@ -27,7 +28,7 @@ int main()
 	ALLEGRO_BITMAP* dino = al_load_bitmap("dino_red.png");
 
 	al_start_timer(timer);
-	while (!koniec)
+	while (!koniec)   
 	{
 		al_wait_for_event(queue, &event);
 		switch (event.type) {
