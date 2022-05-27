@@ -5,6 +5,7 @@
 
 int main()
 {
+	//Nowy komentarz
 	//komentarz
 	al_init();
 	al_install_keyboard();
