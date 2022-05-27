@@ -5,6 +5,7 @@
 
 int main()
 {
+	//test kolizji
 	//Nowy komentarz
 	//komentarz
 	al_init();
