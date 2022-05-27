@@ -41,6 +41,10 @@ int main()
 		return 1;
 	}
 
+	bool redraw = true;
+	ALLEGRO_EVENT event;
+
+	al_start_timer(timer);
 	while (1) {
 
 		al_wait_for_event(queue, &event);
