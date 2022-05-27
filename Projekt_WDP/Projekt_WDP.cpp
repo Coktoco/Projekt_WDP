@@ -5,8 +5,7 @@
 
 int main()
 {
-
-	// OMG KOLEJNY TEST
+	//komentarz
 	al_init();
 	al_install_keyboard();
 	al_set_new_display_flags(ALLEGRO_RESIZABLE);
@@ -50,8 +49,7 @@ int main()
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			koniec = true;
 		}
-		// TO JEST TEST GITHUBA
-		///wwwww
+
 
 		// WPROWADZAM KOLEJNA ZMIANE DO TESTOW
 
