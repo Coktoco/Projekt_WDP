@@ -76,6 +76,8 @@ int main()
 	return 0;
 	*/
 
+	// TO JEST DOBRE !!
+
 	al_init();
 	al_install_keyboard();
 
@@ -101,7 +103,7 @@ int main()
 		return 1;
 	}
 
-	ALLEGRO_BITMAP* jetpack = al_load_bitmap("dino_red.png");
+	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman.png");
 	if (!jetpack)
 		{
 		printf("Nie udalo sie zaladowac zdjecia!\n");
