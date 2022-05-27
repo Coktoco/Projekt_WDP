@@ -8,10 +8,10 @@ int main()
 	// KOLIZJA
 	//Nowy komentarz
 	//komentarz
-	al_init();
+	/*al_init();
 	al_install_keyboard();
 	al_set_new_display_flags(ALLEGRO_RESIZABLE);
-
+	//jeszcze raz
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 100.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_DISPLAY* disp = al_create_display(220, 120);
@@ -72,4 +72,5 @@ int main()
 	al_destroy_event_queue(queue);
 
 	return 0;
+	*/
 }
