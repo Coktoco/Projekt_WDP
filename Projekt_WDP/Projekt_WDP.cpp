@@ -4,6 +4,12 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+#include <ctime>
+
+int losuj_dy() {
+	int dy = rand() % 500;
+	return dy;
+}
 
 int main()
 {
@@ -11,6 +17,7 @@ int main()
 	al_init();
 	al_install_keyboard();
 	al_init_image_addon();
+	al_init_primitives_addon();
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
@@ -24,9 +31,13 @@ int main()
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
 	bool redraw = true;
+	bool done = false;
 	ALLEGRO_EVENT event;
-
-	al_start_timer(timer);
+	int x = 0, y = 0;
+	int dx=2000, dy=0;
+	unsigned char key[ALLEGRO_KEY_MAX];
+	memset(key, 0, sizeof(key));
+	srand(time(0));
 
 	if (!al_init_image_addon())
 	{
@@ -43,21 +54,53 @@ int main()
 
 	al_start_timer(timer);
 	while (1) {
-
 		al_wait_for_event(queue, &event);
 
-		if (event.type == ALLEGRO_EVENT_TIMER)
+		switch (event.type) {
+		case ALLEGRO_EVENT_TIMER:
+			if (key[ALLEGRO_KEY_UP])
+				y-=10;
+			if (key[ALLEGRO_KEY_DOWN])
+				y+=10;
+			if (key[ALLEGRO_KEY_RIGHT])
+				x+=10;
+			if (key[ALLEGRO_KEY_LEFT])
+				x-=10;
+			if (key[ALLEGRO_KEY_ESCAPE])
+				done = true;
+			if (dx < -500) {
+				dx = 2000;
+				dy = losuj_dy();
+			}
+
+			if ((x+150>dx && x+150<dx+300) && (y+150>dy && y+150<dy+300))
+				done = true;
+			
 			redraw = true;
-		else if((event.type == ALLEGRO_EVENT_KEY_DOWN) || (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))
 			break;
+		case ALLEGRO_EVENT_KEY_DOWN:
+			key[event.keyboard.keycode] = 1;
+			break;
+		case ALLEGRO_EVENT_KEY_UP:
+			key[event.keyboard.keycode] = 0;
+			break;
+		case ALLEGRO_EVENT_DISPLAY_CLOSE:
+			done = true;
+			break;
+		}
+		if (done)
+			break;
+
+		dx-=5;
 
 		if (redraw && al_is_event_queue_empty(queue)) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
-			al_draw_bitmap(background, 0, 0,0);
-			al_draw_bitmap(jetpack, 100, 100, 0);
+			//al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
+			al_draw_bitmap(background, 0, 0, 0);
+			al_draw_bitmap(jetpack, x, y, 0);
+			al_draw_bitmap(jetpack, dx, dy, 1);
+			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
 			al_flip_display();
-
 
 			redraw = false;
 		}
@@ -69,7 +112,5 @@ int main()
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
 
-	// nowy
 	return 0;
-
 }
