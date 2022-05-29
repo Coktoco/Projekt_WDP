@@ -13,6 +13,8 @@ int losuj_dy() {
 
 int main()
 {
+	int move = 900;
+	int move2 = 1400;
 
 	al_init();
 	al_install_keyboard();
@@ -21,7 +23,7 @@ int main()
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-	ALLEGRO_DISPLAY* disp = al_create_display(1880, 1020);
+	ALLEGRO_DISPLAY* disp = al_create_display(800, 440);
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	ALLEGRO_BITMAP* background = al_load_bitmap("background1.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman.png");
@@ -38,6 +40,8 @@ int main()
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
 	srand(time(0));
+
+	al_start_timer(timer);
 
 	if (!al_init_image_addon())
 	{
@@ -100,10 +104,27 @@ int main()
 			al_draw_bitmap(jetpack, x, y, 0);
 			al_draw_bitmap(jetpack, dx, dy, 1);
 			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,0 ,0 ,800 ,480 ,0 );
+			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, x, y, 160, 160, 0);
+			/* ENEMIES  1. */
+			al_draw_filled_circle(move, 370, 30, al_map_rgb_f(0, 0, 0));
+			al_draw_filled_circle(move, 270, 30, al_map_rgb_f(0, 0, 0));
+			al_draw_filled_circle(move, 70, 30, al_map_rgb_f(0, 0, 0));
+
+			/* ENEMIES  2. */
+			al_draw_filled_circle(move2, 70, 30, al_map_rgb_f(0, 0, 0));
+			al_draw_filled_circle(move2, 170, 30, al_map_rgb_f(0, 0, 0));
+			al_draw_filled_circle(move2, 370, 30, al_map_rgb_f(0, 0, 0));
+
+			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
+
 			al_flip_display();
 
 			redraw = false;
 		}
+		/* MOVEMENT OF ENEMIES */
+		move = move - 4;
+		move2 = move2 - 4;
 	}
 
 	al_destroy_bitmap(jetpack);
