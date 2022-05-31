@@ -52,6 +52,10 @@ int main()
 	al_register_event_source(queue, al_get_display_event_source(disp));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
+
+	int xb1 = 0;
+	int xb2 = 800;
+
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
@@ -156,7 +160,8 @@ int main()
 			//al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
 			//al_draw_bitmap(jetpack, dx, dy, 1);
 			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,0 ,0 ,800 ,480 ,0 );
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,480 ,0 );
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 480, 0);
 			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, x, y, 160, 160, 0);
 			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, enemy1.dx, enemy1.dy, 160, 160, 1);
 			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, enemy2.dx, enemy2.dy, 160, 160, 1);
@@ -175,6 +180,13 @@ int main()
 		//liczymy sekundy
 		if (counter % 30 == 0) {
 			player.pkt++; //kazda sekunda to +1 pkt dla gracza
+		}
+		// Przesuwanie tla
+		xb1-=4;
+		xb2-=4;
+		if (xb1 == -800) {
+			xb1 = 0;
+			xb2 = 800;
 		}
 	}
 
