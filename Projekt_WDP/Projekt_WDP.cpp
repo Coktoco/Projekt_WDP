@@ -45,8 +45,9 @@ int main()
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_DISPLAY* disp = al_create_display(800, 440);
 	ALLEGRO_FONT* font = al_create_builtin_font();
-	ALLEGRO_BITMAP* background = al_load_bitmap("background1.png");
-	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman.png");
+	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
+	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy.png");
+	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
 	al_register_event_source(queue, al_get_display_event_source(disp));
@@ -160,12 +161,12 @@ int main()
 			//al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
 			//al_draw_bitmap(jetpack, dx, dy, 1);
 			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,480 ,0 );
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 480, 0);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, x, y, 160, 160, 0);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, enemy1.dx, enemy1.dy, 160, 160, 1);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, enemy2.dx, enemy2.dy, 160, 160, 1);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 500, 500, enemy3.dx, enemy3.dy, 160, 160, 1);
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
+			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, x, y, 130, 130, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
 			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 20, 0, "Score: %d", player.pkt);
@@ -182,8 +183,8 @@ int main()
 			player.pkt++; //kazda sekunda to +1 pkt dla gracza
 		}
 		// Przesuwanie tla
-		xb1-=4;
-		xb2-=4;
+		xb1-=5;
+		xb2-=5;
 		if (xb1 == -800) {
 			xb1 = 0;
 			xb2 = 800;
