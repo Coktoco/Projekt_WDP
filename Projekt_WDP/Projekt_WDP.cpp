@@ -62,6 +62,10 @@ int main()
 	int xb1 = 0;
 	int xb2 = 800;
 
+	// Zmienne cienia
+	int yc = 360;
+	int w_c = 55, h_c = 18;
+
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
@@ -92,12 +96,22 @@ int main()
 
 		switch (event.type) {
 		case ALLEGRO_EVENT_TIMER:
-			if (key[ALLEGRO_KEY_UP])
-				player.y -= player.vy;
-			if (key[ALLEGRO_KEY_DOWN])
-				player.y += player.vy;
-			if (key[ALLEGRO_KEY_RIGHT])
-				player.x += player.vx;
+			if (key[ALLEGRO_KEY_UP]) {
+				y -= vy;
+					yc -= 2;
+				if (yc < 360) {
+					yc = 360;
+				}
+			}
+			if (key[ALLEGRO_KEY_DOWN]) {
+				y += vy;
+					yc += 2;
+					if (yc > 430) {
+						yc = 430;
+					}
+			}
+			if (key[ALLEGRO_KEY_RIGHT]) 
+				x += vx;
 			if (key[ALLEGRO_KEY_LEFT])
 				player.x -= player.vx;
 			if (key[ALLEGRO_KEY_ESCAPE])
@@ -124,29 +138,29 @@ int main()
 			}
 			
 			//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
-			/*if (zderzenie(enemy1, player.x, player.y)) {
+			if (zderzenie(enemy1, x, y)) {
 				enemy1.dx = 800;
 				enemy1.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy2, player.x, player.y)) {
+			if (zderzenie(enemy2, x, y)) {
 				enemy2.dx = 1000;
 				enemy2.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy3, player.x, player.y)) {
+			if (zderzenie(enemy3, x, y)) {
 				enemy3.dx = 1200;
 				enemy3.dy = losuj_dy();
 				player.zycia--;
-			}*/
+			}
 
 			//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
 			if (player.zycia <= 0)
 				done = true;
 
 			//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
-			//if (player.x < -50 || player.x > 750 || player.y < -50 || player.y > 480 - 160)
-				//done = true;
+			if (x < -50 || x > 750 || y < -50 || y > 480 - 160)
+				done = true;
 			
 			redraw = true;
 			break;
@@ -170,15 +184,20 @@ int main()
 
 		if (redraw && al_is_event_queue_empty(queue)) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			//al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
-			//al_draw_bitmap(jetpack, dx, dy, 1);
-			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 130, 130, 0);
-			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
-			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
-			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
+			// Dodanie cienia TEST
+			al_draw_filled_ellipse(x+50, yc, 55, 18, al_map_rgba(0, 0, 0, 200 ));
+			al_draw_filled_ellipse(enemy1.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy2.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy3.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			// JetPackMan
+			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, x, y, 130, 130, 0);
+			// Enemies 
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
+
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
 			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 20, 0, "Score: %d", player.pkt);
