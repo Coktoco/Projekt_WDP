@@ -80,7 +80,7 @@ int main()
 
 	// Zmienne cienia
 	int yc = 728;
-	int w_c = 55, h_c = 18;
+	int w_c = 150, h_c = 30;
 
 	// Zmienna ekranu
 	int ek = 0;
@@ -92,7 +92,7 @@ int main()
 	int counter = 0; //licznik fps
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
-
+	 
 	if (!al_init_image_addon())
 	{
 		printf("Addon nie dziala!\n");
@@ -118,6 +118,12 @@ int main()
 					if (yc < 728) {
 						yc = 728;
 					}
+  					w_c -= 2;
+					if (w_c < 150)
+						w_c = 150;
+					h_c -= 1;
+					if (h_c < 30)
+						h_c = 30;
 				}
 				if (key[ALLEGRO_KEY_DOWN]) {
 					player.y += player.vy;
@@ -125,6 +131,12 @@ int main()
 						if (yc > 860) {
 							yc = 860;
 						}
+						w_c += 2;
+						if (w_c > 300)
+							w_c = 300;
+						h_c+=1;
+						if (h_c > 100)
+							h_c = 100;
 				}
 				if (key[ALLEGRO_KEY_RIGHT]) 
 					player.x += player.vx;
@@ -228,7 +240,7 @@ int main()
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
 						// Dodanie cienia TEST
-						al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, 300, 100, 0);
+						al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 170, 870, 150, 70, 0);
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 170, 870, 150, 70, 0);
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 170, 870, 150, 70, 0);
