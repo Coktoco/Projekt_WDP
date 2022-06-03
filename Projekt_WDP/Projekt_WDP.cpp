@@ -37,6 +37,8 @@ int main()
 {
 	struct Gracz player; //tworzymy strukture na punkty i zycie gracza
 	srand(time(0));
+	bool czy_ekran_start = true;
+	bool czy_koniec = false;
 	//tworzymy trzech wrogow
 	struct Przeciwnik enemy1;
 	enemy1.dx = 1800;
@@ -92,6 +94,8 @@ int main()
 		printf("Nie udalo sie zaladowac zdjecia!\n");
 		return 1;
 	}
+
+
 
 	al_start_timer(timer);
 	while (1) {
@@ -186,6 +190,22 @@ int main()
 		enemy3.dx -= enemy3.vdx;
 
 		if (redraw && al_is_event_queue_empty(queue)) {
+			//ekran startowy
+			while() {
+				al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
+				if (czy_ekran_start) {
+					//wyswietl ekran startowy
+					if(ALLEGRO_KEY_ESCAPE)
+						czy_ekran_start = false;
+				}
+				if(czy_koniec) {
+					//wyswietl ekran koncowy
+					if (ALLEGRO_KEY_ESCAPE) {
+						done = true;
+						czy_koniec = false;
+					}
+				}
+			}
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,1800 ,950, 0 );
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 1800, 950, 0);
