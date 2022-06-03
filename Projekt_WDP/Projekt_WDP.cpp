@@ -6,14 +6,19 @@
 #include <allegro5/allegro_primitives.h>
 #include <ctime>
 
-struct Gracz { //punkty i zycie gracza
-	int pkt = 0;
-	int zycia = 3;
+struct Gracz {
+	float x = 0; //wspolrzedne gracza
+	float y = 0;
+	float vx = 10; //predkosc gracza w poziomie
+	float vy = 10; //predkosc gracza w pionie
+	int pkt = 0; //zdobyte punkty
+	int zycia = 3; //ilosc zyc
 };
 
-struct Przeciwnik { //wspolrzedne przeciwnika
+struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
 	int dx = 800;
 	int dy = 0;
+	int vdx = 10;
 };
 
 bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzenie z konkretnym przeciwnikiem
@@ -60,9 +65,10 @@ int main()
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
-	int x = 0, y = 0; //wspolrzedne gracza
-	int vx = 10, vy = 10; //predkosc gracza
-	int vdx = 10; //predkosc w poziomie wrogow
+	//int x = 0, y = 0; //wspolrzedne gracza
+	//int vx = 10, vy = 10; //predkosc gracza
+	//int vdx = 10; //predkosc w poziomie wrogow
+	float g = 10;
 	int counter = 0; //licznik fps
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
@@ -87,15 +93,21 @@ int main()
 		switch (event.type) {
 		case ALLEGRO_EVENT_TIMER:
 			if (key[ALLEGRO_KEY_UP])
-				y -= vy;
+				player.y -= player.vy;
 			if (key[ALLEGRO_KEY_DOWN])
-				y += vy;
+				player.y += player.vy;
 			if (key[ALLEGRO_KEY_RIGHT])
-				x += vx;
+				player.x += player.vx;
 			if (key[ALLEGRO_KEY_LEFT])
-				x -= vx;
+				player.x -= player.vx;
 			if (key[ALLEGRO_KEY_ESCAPE])
 				done = true;
+
+			//skakanie
+			player.x = player.x + (1.0 / 30.0) * player.vx;
+			player.y = player.y + (1.0 / 30.0) * player.vy;
+			//player.vx = player.vx + (1.0 / 30.0) * g;
+			player.vy = player.vy + (1.0 / 30.0) * g;
 
 			//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
 			if (enemy1.dx < -160) {
@@ -112,29 +124,29 @@ int main()
 			}
 			
 			//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
-			if (zderzenie(enemy1, x, y)) {
+			/*if (zderzenie(enemy1, player.x, player.y)) {
 				enemy1.dx = 800;
 				enemy1.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy2, x, y)) {
+			if (zderzenie(enemy2, player.x, player.y)) {
 				enemy2.dx = 1000;
 				enemy2.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy3, x, y)) {
+			if (zderzenie(enemy3, player.x, player.y)) {
 				enemy3.dx = 1200;
 				enemy3.dy = losuj_dy();
 				player.zycia--;
-			}
+			}*/
 
 			//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
 			if (player.zycia <= 0)
 				done = true;
 
 			//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
-			if (x < -50 || x > 750 || y < -50 || y > 480 - 160)
-				done = true;
+			//if (player.x < -50 || player.x > 750 || player.y < -50 || player.y > 480 - 160)
+				//done = true;
 			
 			redraw = true;
 			break;
@@ -152,9 +164,9 @@ int main()
 			break;
 
 		//wrogowie sie przesuwaja
-		enemy1.dx -= vdx;
-		enemy2.dx -= vdx;
-		enemy3.dx -= vdx;
+		enemy1.dx -= enemy1.vdx;
+		enemy2.dx -= enemy2.vdx;
+		enemy3.dx -= enemy3.vdx;
 
 		if (redraw && al_is_event_queue_empty(queue)) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -163,10 +175,10 @@ int main()
 			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
-			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, x, y, 130, 130, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 130, 130, 0);
+			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
+			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
+			//al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
 			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 20, 0, "Score: %d", player.pkt);
