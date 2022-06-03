@@ -16,30 +16,37 @@ struct Gracz {
 };
 
 struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
-	int dx = 800;
+	int dx = 1800;
 	int dy = 0;
 	int vdx = 10;
 };
 
 bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzenie z konkretnym przeciwnikiem
-	if ((x + 80 > p.dx && x + 80 < p.dx + 160) && (y + 80 > p.dy && y + 80 < p.dy + 160))
+	if ((x + 140 > p.dx && x + 140 < p.dx + 340) && (y + 140 > p.dy && y + 140 < p.dy + 340))
 		return true;
 	else
 		return false;
 }
 
 int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roznych wysokosciach
-	int dy = rand() % (480-160);
+	int dy = rand() % (950-340);
 	return dy;
 }
 
 int main()
 {
 	struct Gracz player; //tworzymy strukture na punkty i zycie gracza
+	srand(time(0));
 	//tworzymy trzech wrogow
 	struct Przeciwnik enemy1;
+	enemy1.dx = 1800;
+	enemy1.dy = losuj_dy();
 	struct Przeciwnik enemy2;
+	enemy2.dx = 2200;
+	enemy2.dy = losuj_dy();
 	struct Przeciwnik enemy3;
+	enemy3.dx = 2600;
+	enemy3.dy = losuj_dy();
 
 	al_init();
 	al_install_keyboard();
@@ -48,7 +55,7 @@ int main()
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-	ALLEGRO_DISPLAY* disp = al_create_display(800, 440);
+	ALLEGRO_DISPLAY* disp = al_create_display(1800, 950);
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy.png");
@@ -60,10 +67,10 @@ int main()
 
 
 	int xb1 = 0;
-	int xb2 = 800;
+	int xb2 = 1800;
 
 	// Zmienne cienia
-	int yc = 360;
+	int yc = 778;
 	int w_c = 55, h_c = 18;
 
 	bool redraw = true;
@@ -73,7 +80,6 @@ int main()
 	int counter = 0; //licznik fps
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
-	srand(time(0));
 
 	if (!al_init_image_addon())
 	{
@@ -96,15 +102,15 @@ int main()
 			if (key[ALLEGRO_KEY_UP]) {
 				player.y -= player.vy;
 					yc -= 2;
-				if (yc < 360) {
-					yc = 360;
+				if (yc < 778) {
+					yc = 778;
 				}
 			}
 			if (key[ALLEGRO_KEY_DOWN]) {
 				player.y += player.vy;
 					yc += 2;
-					if (yc > 430) {
-						yc = 430;
+					if (yc > 930) {
+						yc = 930;
 					}
 			}
 			if (key[ALLEGRO_KEY_RIGHT]) 
@@ -115,32 +121,32 @@ int main()
 				done = true;
 
 			//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
-			if (enemy1.dx < -160) {
-				enemy1.dx = 800; //dla kazdego z trzech wrogow jest przesuniecie o 200 w poziomie, zeby atakowali w odstepach
+			if (enemy1.dx < -340) {
+				enemy1.dx = 1800; //dla kazdego z trzech wrogow jest przesuniecie o 200 w poziomie, zeby atakowali w odstepach
 				enemy1.dy = losuj_dy();
 			}
-			if (enemy2.dx < -160) {
-				enemy2.dx = 1000;
+			if (enemy2.dx < -340) {
+				enemy2.dx = 2200;
 				enemy2.dy = losuj_dy();
 			}
-			if (enemy3.dx < -160) {
-				enemy3.dx = 1200;
+			if (enemy3.dx < -340) {
+				enemy3.dx = 2600;
 				enemy3.dy = losuj_dy();
 			}
 			
 			//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
 			if (zderzenie(enemy1, player.x, player.y)) {
-				enemy1.dx = 800;
+				enemy1.dx = 1800;
 				enemy1.dy = losuj_dy();
 				player.zycia--;
 			}
 			if (zderzenie(enemy2, player.x, player.y)) {
-				enemy2.dx = 1000;
+				enemy2.dx = 2000;
 				enemy2.dy = losuj_dy();
 				player.zycia--;
 			}
 			if (zderzenie(enemy3, player.x, player.y)) {
-				enemy3.dx = 1200;
+				enemy3.dx = 2200;
 				enemy3.dy = losuj_dy();
 				player.zycia--;
 			}
@@ -150,8 +156,14 @@ int main()
 				done = true;
 
 			//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
-			if (player.x < -50 || player.x > 750 || player.y < -50 || player.y > 480 - 160)
-				done = true;
+			if (player.y < 0)
+				player.y = 0;
+			if (player.y > 950 - 280)
+				player.y = 950 - 280;
+			if (player.x < 0)
+				player.x = 0;
+			if (player.x > 1800 - 280)
+				player.x = 1800 - 280;
 			
 			redraw = true;
 			break;
@@ -175,24 +187,24 @@ int main()
 
 		if (redraw && al_is_event_queue_empty(queue)) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,1800 ,950, 0 );
+			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 1800, 950, 0);
 			// Dodanie cienia TEST
-			al_draw_filled_ellipse(player.x+50, yc, 55, 18, al_map_rgba(0, 0, 0, 200 ));
-			al_draw_filled_ellipse(enemy1.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
-			al_draw_filled_ellipse(enemy2.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
-			al_draw_filled_ellipse(enemy3.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(player.x+120, yc, 120, 40, al_map_rgba(0, 0, 0, 200 ));
+			al_draw_filled_ellipse(enemy1.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy2.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy3.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
 			// JetPackMan
-			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 130, 130, 0);
+			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 			// Enemies 
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
+			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
 
 
-			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
-			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 20, 0, "Score: %d", player.pkt);
-			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 30, 0, "Lives: %d", player.zycia);
+			al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
+			al_draw_textf(font, al_map_rgb(255, 255, 255),40, 50, 0, "Score: %d", player.pkt);
+			al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
 
 			al_flip_display();
 
@@ -207,9 +219,9 @@ int main()
 		// Przesuwanie tla
 		xb1-=5;
 		xb2-=5;
-		if (xb1 == -800) {
+		if (xb1 == -1800) {
 			xb1 = 0;
-			xb2 = 800;
+			xb2 = 1800;
 		}
 	}
 
