@@ -12,6 +12,7 @@ struct Gracz {
 	float vx = 10; //predkosc gracza w poziomie
 	float vy = 10; //predkosc gracza w pionie
 	int pkt = 0; //zdobyte punkty
+	int highscore = 0;
 	int zycia = 3; //ilosc zyc
 };
 
@@ -21,8 +22,21 @@ struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
 	int vdx = 10;
 };
 
+struct Piwo {
+	int dx;
+	int dy;
+	int pkt_spawn;
+};
+
 bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzenie z konkretnym przeciwnikiem
-	if ((x + 140 > p.dx && x + 140 < p.dx + 340) && (y + 140 > p.dy && y + 140 < p.dy + 340))
+	if ((x + 140 > p.dx && x + 140 < p.dx + 170) && (y + 140 > p.dy && y + 140 < p.dy + 340))
+		return true;
+	else
+		return false;
+}
+
+bool zderzenie_piwo(struct Piwo p, int x, int y) {
+	if ((x + 140 > p.dx && x + 140 < p.dx + 120) && (y + 140 > p.dy && y + 140 < p.dy + 180))
 		return true;
 	else
 		return false;
@@ -37,8 +51,7 @@ int main()
 {
 	struct Gracz player; //tworzymy strukture na punkty i zycie gracza
 	srand(time(0));
-	bool czy_ekran_start = true;
-	bool czy_koniec = false;
+
 	//tworzymy trzech wrogow
 	struct Przeciwnik enemy1;
 	enemy1.dx = 1800;
@@ -49,6 +62,10 @@ int main()
 	struct Przeciwnik enemy3;
 	enemy3.dx = 2600;
 	enemy3.dy = losuj_dy();
+
+	struct Piwo beer;
+	beer.dx = 1800;
+	beer.dy = losuj_dy();
 
 	al_init();
 	al_install_keyboard();
@@ -62,10 +79,15 @@ int main()
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
-	ALLEGRO_BITMAP* ekran_start = al_load_bitmap("Ekran_start.png");
+	ALLEGRO_BITMAP* ekran_start1 = al_load_bitmap("Ekran_start1.png");
+	ALLEGRO_BITMAP* ekran_start2 = al_load_bitmap("Ekran_start2.png");
 	ALLEGRO_BITMAP* ekran_koniec = al_load_bitmap("Ekran_koniec.png");
 	ALLEGRO_BITMAP* cien_jetpack = al_load_bitmap("Cien_jetpackman.png");
 	ALLEGRO_BITMAP* cien_enemy = al_load_bitmap("Cien_enemy.png");
+	ALLEGRO_BITMAP* piwo = al_load_bitmap("Piwo.png");
+	ALLEGRO_BITMAP* serca1 = al_load_bitmap("1serca.png");
+	ALLEGRO_BITMAP* serca2 = al_load_bitmap("2serca.png");
+	ALLEGRO_BITMAP* serca3 = al_load_bitmap("3serca.png");
 
 
 
@@ -147,6 +169,14 @@ int main()
 				// Zmienne od zmiany ekranu
 				if (key[ALLEGRO_KEY_ENTER])
 					ek = 1;
+
+				//spawnowanie piwa
+				beer.pkt_spawn = (rand() % 30) + 1;
+				if(player.pkt % beer.pkt_spawn == 0 && (beer.dx < 0 && beer.dx > 1800)) {
+					beer.dx = 1800;
+					beer.dy = losuj_dy();
+				}
+
 				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
 				if (enemy1.dx < -340) {
 					enemy1.dx = 1800; //dla kazdego z trzech wrogow jest przesuniecie o 200 w poziomie, zeby atakowali w odstepach
@@ -176,6 +206,11 @@ int main()
 					enemy3.dx = 2200;
 					enemy3.dy = losuj_dy();
 					player.zycia--;
+				}
+				if(zderzenie_piwo(beer, player.x, player.y)) {
+					if(player.zycia < 3) {
+						player.zycia++;
+					}
 				}
 
 				//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
@@ -211,6 +246,7 @@ int main()
 			enemy1.dx -= enemy1.vdx;
 			enemy2.dx -= enemy2.vdx;
 			enemy3.dx -= enemy3.vdx;
+			beer.dx -= enemy1.vdx;
 
 			if (redraw && al_is_event_queue_empty(queue)) {
 				// EDIT !!!!!! JUZ OGARNIAM LOL, Po prostu wartosci od naszych zmiennych (wspolrzedne rozne etc) dalej normalnie sie zmienialy i wgl,
@@ -220,7 +256,9 @@ int main()
 				if (ek == 0) {
 					al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
 					al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
-					al_draw_scaled_bitmap(ekran_start, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+					al_draw_scaled_bitmap(ekran_start2, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+					if (counter%60>0 && counter%60<30)
+						al_draw_scaled_bitmap(ekran_start1, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
 					enemy1.dx = -300;
 					enemy2.dx = -300;
 					enemy3.dx = -300;
@@ -234,6 +272,13 @@ int main()
 						// al_clear_to_color(al_map_rgb(0, 0, 0));
 						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
 
+						//zapisywanie nowego rekordu do pliku 
+						/*FILE* plik = fopen_s("highscore.txt", "r+");
+						int bufor; //bufor do zmiennej z pliku
+						fscanf_s(plik, "%d", bufor);
+						if (player.highscore > bufor)
+							fprintf(plik,"%d",player.highscore);
+						fclose(plik);*/
 					}
 					else {
 						al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -241,17 +286,27 @@ int main()
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
 						// Dodanie cienia TEST
 						al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 170, 840, 150, 70, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 170, 840, 150, 70, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 170, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 140, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 140, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 140, 840, 150, 70, 0);
 						// JetPackMan
 						al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						// Enemies 
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
-
-
+						// Piwo
+						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, beer.dx, beer.dy, 120, 180, 0);
+						// Serca
+						if (player.zycia == 3) {
+							al_draw_tinted_scaled_bitmap(serca3, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
+						}
+						if (player.zycia == 2) {
+							al_draw_tinted_scaled_bitmap(serca2, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
+						}
+						if (player.zycia == 1) {
+							al_draw_tinted_scaled_bitmap(serca1, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
+						}
 						al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
 						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 50, 0, "Score: %d", player.pkt);
 						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
@@ -263,8 +318,10 @@ int main()
 		//liczymy fpsy
 		counter++;
 		//liczymy sekundy
-		if (counter % 30 == 0) {
+		if (counter % 60 == 0) {
 			player.pkt++; //kazda sekunda to +1 pkt dla gracza
+			if (player.pkt > player.highscore)
+				player.highscore = player.pkt;
 		}
 		// Przesuwanie tla
 		xb1-=5;
