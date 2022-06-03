@@ -55,13 +55,20 @@ int main()
 	al_init_image_addon();
 	al_init_primitives_addon();
 
-	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
+	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_DISPLAY* disp = al_create_display(1800, 950);
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
+	ALLEGRO_BITMAP* ekran_start = al_load_bitmap("Ekran_start.png");
+	ALLEGRO_BITMAP* ekran_koniec = al_load_bitmap("Ekran_koniec.png");
+	ALLEGRO_BITMAP* cien_jetpack = al_load_bitmap("Cien_jetpackman.png");
+	ALLEGRO_BITMAP* cien_enemy = al_load_bitmap("Cien_enemy.png");
+
+
+
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
 	al_register_event_source(queue, al_get_display_event_source(disp));
@@ -72,8 +79,11 @@ int main()
 	int xb2 = 1800;
 
 	// Zmienne cienia
-	int yc = 778;
+	int yc = 728;
 	int w_c = 55, h_c = 18;
+
+	// Zmienna ekranu
+	int ek = 0;
 
 	bool redraw = true;
 	bool done = false;
@@ -96,140 +106,148 @@ int main()
 	}
 
 
-
 	al_start_timer(timer);
 	while (1) {
 		al_wait_for_event(queue, &event);
 
-		switch (event.type) {
-		case ALLEGRO_EVENT_TIMER:
-			if (key[ALLEGRO_KEY_UP]) {
-				player.y -= player.vy;
-					yc -= 2;
-				if (yc < 778) {
-					yc = 778;
-				}
-			}
-			if (key[ALLEGRO_KEY_DOWN]) {
-				player.y += player.vy;
-					yc += 2;
-					if (yc > 930) {
-						yc = 930;
-					}
-			}
-			if (key[ALLEGRO_KEY_RIGHT]) 
-				player.x += player.vx;
-			if (key[ALLEGRO_KEY_LEFT])
-				player.x -= player.vx;
-			if (key[ALLEGRO_KEY_ESCAPE])
-				done = true;
-
-			//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
-			if (enemy1.dx < -340) {
-				enemy1.dx = 1800; //dla kazdego z trzech wrogow jest przesuniecie o 200 w poziomie, zeby atakowali w odstepach
-				enemy1.dy = losuj_dy();
-			}
-			if (enemy2.dx < -340) {
-				enemy2.dx = 2200;
-				enemy2.dy = losuj_dy();
-			}
-			if (enemy3.dx < -340) {
-				enemy3.dx = 2600;
-				enemy3.dy = losuj_dy();
-			}
-			
-			//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
-			if (zderzenie(enemy1, player.x, player.y)) {
-				enemy1.dx = 1800;
-				enemy1.dy = losuj_dy();
-				player.zycia--;
-			}
-			if (zderzenie(enemy2, player.x, player.y)) {
-				enemy2.dx = 2000;
-				enemy2.dy = losuj_dy();
-				player.zycia--;
-			}
-			if (zderzenie(enemy3, player.x, player.y)) {
-				enemy3.dx = 2200;
-				enemy3.dy = losuj_dy();
-				player.zycia--;
-			}
-
-			//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
-			if (player.zycia <= 0)
-				done = true;
-
-			//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
-			if (player.y < 0)
-				player.y = 0;
-			if (player.y > 950 - 280)
-				player.y = 950 - 280;
-			if (player.x < 0)
-				player.x = 0;
-			if (player.x > 1800 - 280)
-				player.x = 1800 - 280;
-			
-			redraw = true;
-			break;
-		case ALLEGRO_EVENT_KEY_DOWN:
-			key[event.keyboard.keycode] = 1;
-			break;
-		case ALLEGRO_EVENT_KEY_UP:
-			key[event.keyboard.keycode] = 0;
-			break;
-		case ALLEGRO_EVENT_DISPLAY_CLOSE:
-			done = true;
-			break;
-		}
-		if (done)
-			break;
-
-		//wrogowie sie przesuwaja
-		enemy1.dx -= enemy1.vdx;
-		enemy2.dx -= enemy2.vdx;
-		enemy3.dx -= enemy3.vdx;
-
-		if (redraw && al_is_event_queue_empty(queue)) {
-			//ekran startowy
-			while() {
-				al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
-				if (czy_ekran_start) {
-					//wyswietl ekran startowy
-					if(ALLEGRO_KEY_ESCAPE)
-						czy_ekran_start = false;
-				}
-				if(czy_koniec) {
-					//wyswietl ekran koncowy
-					if (ALLEGRO_KEY_ESCAPE) {
-						done = true;
-						czy_koniec = false;
+			switch (event.type) {
+			case ALLEGRO_EVENT_TIMER:
+				if (key[ALLEGRO_KEY_UP]) {
+					player.y -= player.vy;
+						yc -= 2;
+					if (yc < 728) {
+						yc = 728;
 					}
 				}
+				if (key[ALLEGRO_KEY_DOWN]) {
+					player.y += player.vy;
+						yc += 2;
+						if (yc > 860) {
+							yc = 860;
+						}
+				}
+				if (key[ALLEGRO_KEY_RIGHT]) 
+					player.x += player.vx;
+				if (key[ALLEGRO_KEY_LEFT])
+					player.x -= player.vx;
+				if (key[ALLEGRO_KEY_ESCAPE])
+					done = true;
+				// Zmienne od zmiany ekranu
+				if (key[ALLEGRO_KEY_ENTER])
+					ek = 1;
+				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
+				if (enemy1.dx < -340) {
+					enemy1.dx = 1800; //dla kazdego z trzech wrogow jest przesuniecie o 200 w poziomie, zeby atakowali w odstepach
+					enemy1.dy = losuj_dy();
+				}
+				if (enemy2.dx < -340) {
+					enemy2.dx = 2200;
+					enemy2.dy = losuj_dy();
+				}
+				if (enemy3.dx < -340) {
+					enemy3.dx = 2600;
+					enemy3.dy = losuj_dy();
+				}
+			
+				//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
+				if (zderzenie(enemy1, player.x, player.y)) {
+					enemy1.dx = 1800;
+					enemy1.dy = losuj_dy();
+					player.zycia--;
+				}
+				if (zderzenie(enemy2, player.x, player.y)) {
+					enemy2.dx = 2000;
+					enemy2.dy = losuj_dy();
+					player.zycia--;
+				}
+				if (zderzenie(enemy3, player.x, player.y)) {
+					enemy3.dx = 2200;
+					enemy3.dy = losuj_dy();
+					player.zycia--;
+				}
+
+				//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
+				// if (player.zycia <= 0)
+				//	done = true;
+
+				//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
+				if (player.y < 0)
+					player.y = 0;
+				if (player.y > 950 - 280)
+					player.y = 950 - 280;
+				if (player.x < 0)
+					player.x = 0;
+				if (player.x > 1800 - 280)
+					player.x = 1800 - 280;
+			
+				redraw = true;
+				break;
+			case ALLEGRO_EVENT_KEY_DOWN:
+				key[event.keyboard.keycode] = 1;
+				break;
+			case ALLEGRO_EVENT_KEY_UP:
+				key[event.keyboard.keycode] = 0;
+				break;
+			case ALLEGRO_EVENT_DISPLAY_CLOSE:
+				done = true;
+				break;
 			}
-			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,1800 ,950, 0 );
-			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 1800, 950, 0);
-			// Dodanie cienia TEST
-			al_draw_filled_ellipse(player.x+120, yc, 120, 40, al_map_rgba(0, 0, 0, 200 ));
-			al_draw_filled_ellipse(enemy1.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
-			al_draw_filled_ellipse(enemy2.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
-			al_draw_filled_ellipse(enemy3.dx + 170, 870, 75, 35, al_map_rgba(0, 0, 0, 200));
-			// JetPackMan
-			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
-			// Enemies 
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
-			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
+			if (done)
+				break;
+
+			//wrogowie sie przesuwaja
+			enemy1.dx -= enemy1.vdx;
+			enemy2.dx -= enemy2.vdx;
+			enemy3.dx -= enemy3.vdx;
+
+			if (redraw && al_is_event_queue_empty(queue)) {
+				// EDIT !!!!!! JUZ OGARNIAM LOL, Po prostu wartosci od naszych zmiennych (wspolrzedne rozne etc) dalej normalnie sie zmienialy i wgl,
+				// tylko grafika jest wstrzymana
+				// takze takie rzeczy jak scory, hitboxy, etc normalnie sie przesuwaly, a jak juz mialo sie wyrenderowac to mialo te nowe poloopowane wartosci !!!
+				
+				if (ek == 0) {
+					al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
+					al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
+					al_draw_scaled_bitmap(ekran_start, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+					enemy1.dx = -300;
+					enemy2.dx = -300;
+					enemy3.dx = -300;
+					player.pkt = 0;
+					al_flip_display();
+					redraw = false;
+
+				}
+				else {
+					if (player.zycia <= 0) {
+						// al_clear_to_color(al_map_rgb(0, 0, 0));
+						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+
+					}
+					else {
+						al_clear_to_color(al_map_rgb(0, 0, 0));
+						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
+						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
+						// Dodanie cienia TEST
+						al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, 300, 100, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 170, 870, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 170, 870, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 170, 870, 150, 70, 0);
+						// JetPackMan
+						al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						// Enemies 
+						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
+						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
+						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
 
 
-			al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
-			al_draw_textf(font, al_map_rgb(255, 255, 255),40, 50, 0, "Score: %d", player.pkt);
-			al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
-
-			al_flip_display();
-
-			redraw = false;
-		}
+						al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
+						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 50, 0, "Score: %d", player.pkt);
+						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
+					}
+					al_flip_display();
+				}
+					redraw = false;
+			}
 		//liczymy fpsy
 		counter++;
 		//liczymy sekundy
