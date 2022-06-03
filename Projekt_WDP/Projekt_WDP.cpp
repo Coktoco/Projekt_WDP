@@ -69,10 +69,7 @@ int main()
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
-	//int x = 0, y = 0; //wspolrzedne gracza
-	//int vx = 10, vy = 10; //predkosc gracza
-	//int vdx = 10; //predkosc w poziomie wrogow
-	float g = 10;
+
 	int counter = 0; //licznik fps
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
@@ -97,31 +94,25 @@ int main()
 		switch (event.type) {
 		case ALLEGRO_EVENT_TIMER:
 			if (key[ALLEGRO_KEY_UP]) {
-				y -= vy;
+				player.y -= player.vy;
 					yc -= 2;
 				if (yc < 360) {
 					yc = 360;
 				}
 			}
 			if (key[ALLEGRO_KEY_DOWN]) {
-				y += vy;
+				player.y += player.vy;
 					yc += 2;
 					if (yc > 430) {
 						yc = 430;
 					}
 			}
 			if (key[ALLEGRO_KEY_RIGHT]) 
-				x += vx;
+				player.x += player.vx;
 			if (key[ALLEGRO_KEY_LEFT])
 				player.x -= player.vx;
 			if (key[ALLEGRO_KEY_ESCAPE])
 				done = true;
-
-			//skakanie
-			player.x = player.x + (1.0 / 30.0) * player.vx;
-			player.y = player.y + (1.0 / 30.0) * player.vy;
-			//player.vx = player.vx + (1.0 / 30.0) * g;
-			player.vy = player.vy + (1.0 / 30.0) * g;
 
 			//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
 			if (enemy1.dx < -160) {
@@ -138,17 +129,17 @@ int main()
 			}
 			
 			//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
-			if (zderzenie(enemy1, x, y)) {
+			if (zderzenie(enemy1, player.x, player.y)) {
 				enemy1.dx = 800;
 				enemy1.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy2, x, y)) {
+			if (zderzenie(enemy2, player.x, player.y)) {
 				enemy2.dx = 1000;
 				enemy2.dy = losuj_dy();
 				player.zycia--;
 			}
-			if (zderzenie(enemy3, x, y)) {
+			if (zderzenie(enemy3, player.x, player.y)) {
 				enemy3.dx = 1200;
 				enemy3.dy = losuj_dy();
 				player.zycia--;
@@ -159,7 +150,7 @@ int main()
 				done = true;
 
 			//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
-			if (x < -50 || x > 750 || y < -50 || y > 480 - 160)
+			if (player.x < -50 || player.x > 750 || player.y < -50 || player.y > 480 - 160)
 				done = true;
 			
 			redraw = true;
@@ -187,12 +178,12 @@ int main()
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
 			// Dodanie cienia TEST
-			al_draw_filled_ellipse(x+50, yc, 55, 18, al_map_rgba(0, 0, 0, 200 ));
+			al_draw_filled_ellipse(player.x+50, yc, 55, 18, al_map_rgba(0, 0, 0, 200 ));
 			al_draw_filled_ellipse(enemy1.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
 			al_draw_filled_ellipse(enemy2.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
 			al_draw_filled_ellipse(enemy3.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
 			// JetPackMan
-			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, x, y, 130, 130, 0);
+			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 130, 130, 0);
 			// Enemies 
 			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
 			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
