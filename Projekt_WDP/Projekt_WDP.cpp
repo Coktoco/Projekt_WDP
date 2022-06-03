@@ -57,6 +57,10 @@ int main()
 	int xb1 = 0;
 	int xb2 = 800;
 
+	// Zmienne cienia
+	int yc = 360;
+	int w_c = 55, h_c = 18;
+
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
@@ -86,11 +90,21 @@ int main()
 
 		switch (event.type) {
 		case ALLEGRO_EVENT_TIMER:
-			if (key[ALLEGRO_KEY_UP])
+			if (key[ALLEGRO_KEY_UP]) {
 				y -= vy;
-			if (key[ALLEGRO_KEY_DOWN])
+					yc -= 2;
+				if (yc < 360) {
+					yc = 360;
+				}
+			}
+			if (key[ALLEGRO_KEY_DOWN]) {
 				y += vy;
-			if (key[ALLEGRO_KEY_RIGHT])
+					yc += 2;
+					if (yc > 430) {
+						yc = 430;
+					}
+			}
+			if (key[ALLEGRO_KEY_RIGHT]) 
 				x += vx;
 			if (key[ALLEGRO_KEY_LEFT])
 				x -= vx;
@@ -158,15 +172,20 @@ int main()
 
 		if (redraw && al_is_event_queue_empty(queue)) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			//al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world");
-			//al_draw_bitmap(jetpack, dx, dy, 1);
-			//al_draw_filled_rectangle(0, 0, 330, 330, al_map_rgb(50, 58, 168));
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb1 ,0 ,800 ,440 ,0 );
 			al_draw_scaled_bitmap(background, 0, 0, 1920, 1080,xb2 , 0, 800, 440, 0);
+			// Dodanie cienia TEST
+			al_draw_filled_ellipse(x+50, yc, 55, 18, al_map_rgba(0, 0, 0, 200 ));
+			al_draw_filled_ellipse(enemy1.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy2.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			al_draw_filled_ellipse(enemy3.dx + 75, 380, 35, 15, al_map_rgba(0, 0, 0, 200));
+			// JetPackMan
 			al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, x, y, 130, 130, 0);
+			// Enemies 
 			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 160, 160, 0);
 			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 160, 160, 0);
 			al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 160, 160, 0);
+
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), 17, 10, 0, "EPIc Adventure");
 			al_draw_textf(font, al_map_rgb(255, 255, 255), 17, 20, 0, "Score: %d", player.pkt);
