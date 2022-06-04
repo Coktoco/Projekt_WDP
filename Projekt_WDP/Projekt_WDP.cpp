@@ -23,10 +23,20 @@ struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
 };
 
 struct Piwo {
-	int dx;
+	int dx = 1800;
 	int dy;
-	int klatki_spawn; //co ile klatek ma sie piwo spawnowac w danym momencie
-	bool piwo_ruch = false; //czy piwo ma sie poruszac w danym momencie
+	int spawn; //co ile klatek ma sie piwo spawnowac w danym momencie
+	bool ruch = false; //czy piwo ma sie poruszac w danym momencie
+	bool blokada = false;
+};
+
+struct Tarcza {
+	int dx = 1800;
+	int dy;
+	int spawn;
+	bool tarcza_ruch = false;
+	bool blokada = false;
+	bool aktywna = false;
 };
 
 int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roznych wysokosciach
@@ -65,8 +75,10 @@ int main()
 	enemy3.dy = losuj_dy();
 
 	struct Piwo beer;
-	beer.dx = 1800;
 	beer.dy = losuj_dy();
+
+	struct Tarcza shield;
+	shield.dy = losuj_dy();
 
 	al_init();
 	al_install_keyboard();
@@ -170,25 +182,50 @@ int main()
 					ek = 1;
 
 				//spawnowanie piwa
-				beer.klatki_spawn = (rand() % 600) + 600;
-				if(counter % beer.klatki_spawn == 0) {
+				//beer.klatki_spawn = (rand() % 600) + 600;
+				beer.spawn = rand() % 1000;
+				if(beer.spawn == 0 && !beer.ruch) {
 					beer.dx = 1800;
 					beer.dy = losuj_dy();
-					beer.piwo_ruch = true;
+					beer.ruch = true;
 				}
 				if (beer.dx < -120) {
 					beer.dx = 1800;
 					beer.dy = losuj_dy();
-					beer.piwo_ruch = false;
+					beer.ruch = false;
 				}
 				if (zderzenie_piwo(beer, player.x, player.y)) {
 					if (player.zycia < 3) {
-						beer.piwo_ruch = false;
 						beer.dx = 1800;
 						beer.dy = losuj_dy();
+						beer.ruch = false;
 						player.zycia++;
 					}
 				}
+
+				//tarcza
+				/*shield.spawn = rand() % 1000;
+				if (shield.spawn == 0 && !shield.blokada) {
+					shield.dx = 1800;
+					shield.dy = losuj_dy();
+					shield.tarcza_ruch = true;
+					shield.blokada = true;
+				}
+				if (shield.dx < -120) {
+					shield.dx = 1800;
+					shield.dy = losuj_dy();
+					shield.tarcza_ruch = false;
+					shield.blokada = false;
+				}
+				if (zderzenie_piwo(beer, player.x, player.y)) {
+					if (player.zycia < 3) {
+						beer.dx = 1800;
+						beer.dy = losuj_dy();
+						beer.piwo_ruch = false;
+						beer.blokada = false;
+						player.zycia++;
+					}
+				}*/
 
 				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
 				if (enemy1.dx < -340) {
@@ -255,7 +292,7 @@ int main()
 			enemy2.dx -= enemy2.vdx;
 			enemy3.dx -= enemy3.vdx;
 
-			if(beer.piwo_ruch)
+			if(beer.ruch)
 				beer.dx -= enemy1.vdx;
 
 			if (redraw && al_is_event_queue_empty(queue)) {
@@ -301,6 +338,7 @@ int main()
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 140, 840, 150, 70, 0);
 						// JetPackMan
 						al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						//al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						// Enemies 
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
