@@ -33,7 +33,7 @@ struct Tarcza {
 	int dx = 1800;
 	int dy;
 	int spawn; //liczba do losowania czasu spawnowania tarczy
-	bool ruch = false; //czy piwo ma sie poruszac w danym momencie
+	bool ruch = false; //czy tarcza ma sie poruszac w danym momencie
 	bool aktywna = false; //czy tarcza jest aktywna
 	int czas_start = 0; //ilosc klatek w momencie zebrania tarczy
 };
@@ -96,7 +96,7 @@ int main()
 	ALLEGRO_DISPLAY* disp = al_create_display(1800, 950);
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
-	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy.png");
+	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy_v2.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
 	ALLEGRO_BITMAP* ekran_start1 = al_load_bitmap("Ekran_start1.png");
 	ALLEGRO_BITMAP* ekran_start2 = al_load_bitmap("Ekran_start2.png");
@@ -107,6 +107,8 @@ int main()
 	ALLEGRO_BITMAP* serca1 = al_load_bitmap("1serca.png");
 	ALLEGRO_BITMAP* serca2 = al_load_bitmap("2serca.png");
 	ALLEGRO_BITMAP* serca3 = al_load_bitmap("3serca.png");
+	ALLEGRO_BITMAP* shield1 = al_load_bitmap("Shield_ghost.png");
+
 
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
@@ -302,9 +304,6 @@ int main()
 				shield.dx -= enemy1.vdx;
 
 			if (redraw && al_is_event_queue_empty(queue)) {
-				// EDIT !!!!!! JUZ OGARNIAM LOL, Po prostu wartosci od naszych zmiennych (wspolrzedne rozne etc) dalej normalnie sie zmienialy i wgl,
-				// tylko grafika jest wstrzymana
-				// takze takie rzeczy jak scory, hitboxy, etc normalnie sie przesuwaly, a jak juz mialo sie wyrenderowac to mialo te nowe poloopowane wartosci !!!
 				
 				if (ek == 0) {
 					al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
@@ -322,8 +321,8 @@ int main()
 				}
 				else {
 					if (player.zycia <= 0) {
-						// al_clear_to_color(al_map_rgb(0, 0, 0));
 						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+						player.zycia = 0;
 
 						//zapisywanie nowego rekordu do pliku 
 						/*FILE* plik = fopen_s("highscore.txt", "r+");
@@ -338,16 +337,18 @@ int main()
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb1, 0, 1800, 950, 0);
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, xb2, 0, 1800, 950, 0);
 						// Dodanie cienia TEST
-						al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 140, 840, 150, 70, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 140, 840, 150, 70, 0);
-						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 140, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy1.dx + 95, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 95, 840, 150, 70, 0);
+						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 95, 840, 150, 70, 0);
 						// JetPackMan
-						if(shield.aktywna)
+						if (shield.aktywna) {
 							al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.3), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
-						else
+						}
+						// Else if poniewaz samo else nie dzialalo poprawnie, tarcza sie nie konczyla (?)
+						else  {
+							al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
 							al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
-						
+						}
 						// Enemies 
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
@@ -355,7 +356,7 @@ int main()
 						// Piwo
 						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, beer.dx, beer.dy, 120, 180, 0);
 						//Tarcza
-						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, shield.dx, shield.dy, 120, 180, 2);
+						al_draw_scaled_bitmap(shield1, 0, 0, 508, 734, shield.dx, shield.dy, 140, 180, 0);
 						// Serca
 						if (player.zycia == 3) {
 							al_draw_tinted_scaled_bitmap(serca3, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
