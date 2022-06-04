@@ -25,18 +25,17 @@ struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
 struct Piwo {
 	int dx = 1800;
 	int dy;
-	int spawn; //co ile klatek ma sie piwo spawnowac w danym momencie
+	int spawn; //liczba do losowania czasu spawnowania piwa
 	bool ruch = false; //czy piwo ma sie poruszac w danym momencie
-	bool blokada = false;
 };
 
 struct Tarcza {
 	int dx = 1800;
 	int dy;
-	int spawn;
-	bool tarcza_ruch = false;
-	bool blokada = false;
-	bool aktywna = false;
+	int spawn; //liczba do losowania czasu spawnowania tarczy
+	bool ruch = false; //czy piwo ma sie poruszac w danym momencie
+	bool aktywna = false; //czy tarcza jest aktywna
+	int czas_start = 0; //ilosc klatek w momencie zebrania tarczy
 };
 
 int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roznych wysokosciach
@@ -53,6 +52,13 @@ bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzeni
 
 bool zderzenie_piwo(struct Piwo p, int x, int y) {
 	if ((x + 140 > p.dx-60 && x + 140 < p.dx + 120+60) && (y + 140 > p.dy-60 && y + 140 < p.dy + 180+60))
+		return true;
+	else
+		return false;
+}
+
+bool zderzenie_tarcza(struct Tarcza t, int x, int y) {
+	if ((x + 140 > t.dx - 60 && x + 140 < t.dx + 120 + 60) && (y + 140 > t.dy - 60 && y + 140 < t.dy + 180 + 60))
 		return true;
 	else
 		return false;
@@ -183,49 +189,47 @@ int main()
 
 				//spawnowanie piwa
 				//beer.klatki_spawn = (rand() % 600) + 600;
-				beer.spawn = rand() % 1000;
-				if(beer.spawn == 0 && !beer.ruch) {
+				beer.spawn = rand() % 1000; //losowanie liczby od 0 do 999
+				if(beer.spawn == 0 && !beer.ruch) { //piwo ma wjechac na ekran kiedy zostanie wylosowane 0 i piwo sie jeszcze nie porusza
 					beer.dx = 1800;
 					beer.dy = losuj_dy();
-					beer.ruch = true;
+					beer.ruch = true; //piwo ma zaczac wjezdzac na ekran
 				}
-				if (beer.dx < -120) {
+				if (beer.dx < -120) { //piwo wyjezdza poza ekran
 					beer.dx = 1800;
 					beer.dy = losuj_dy();
-					beer.ruch = false;
+					beer.ruch = false; //piwo ma sie pojawic za ekranem, ale ma sie nie ruszac dopoki nie zostanie wylosowane 
 				}
 				if (zderzenie_piwo(beer, player.x, player.y)) {
 					if (player.zycia < 3) {
 						beer.dx = 1800;
 						beer.dy = losuj_dy();
-						beer.ruch = false;
-						player.zycia++;
+						beer.ruch = false; //piwo ma sie pojawic za ekranem, ale ma sie nie ruszac dopoki nie zostanie wylosowane 
+						player.zycia++; //gracz dostanie +1 zycie
 					}
 				}
 
 				//tarcza
-				/*shield.spawn = rand() % 1000;
-				if (shield.spawn == 0 && !shield.blokada) {
+				shield.spawn = rand() % 1000;
+				if (shield.spawn == 0 && !shield.ruch) {
 					shield.dx = 1800;
 					shield.dy = losuj_dy();
-					shield.tarcza_ruch = true;
-					shield.blokada = true;
+					shield.ruch = true;
 				}
 				if (shield.dx < -120) {
 					shield.dx = 1800;
 					shield.dy = losuj_dy();
-					shield.tarcza_ruch = false;
-					shield.blokada = false;
+					shield.ruch = false;
 				}
-				if (zderzenie_piwo(beer, player.x, player.y)) {
-					if (player.zycia < 3) {
-						beer.dx = 1800;
-						beer.dy = losuj_dy();
-						beer.piwo_ruch = false;
-						beer.blokada = false;
-						player.zycia++;
-					}
-				}*/
+				if (zderzenie_tarcza(shield, player.x, player.y)) {
+					shield.aktywna = true;
+					shield.czas_start = counter;
+					shield.dx = 1800;
+					shield.dy = losuj_dy();
+					shield.ruch = false;
+				}
+				if (counter - shield.czas_start == 300) //jesli minelo 5 sekund to tarcza sie deaktywuje
+					shield.aktywna = false;
 
 				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
 				if (enemy1.dx < -340) {
@@ -242,20 +246,20 @@ int main()
 				}
 			
 				//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci jedno zycie
-				if (zderzenie(enemy1, player.x, player.y)) {
-					enemy1.dx = 1800;
-					enemy1.dy = losuj_dy();
-					player.zycia--;
+				if (zderzenie(enemy1, player.x, player.y) && !shield.aktywna) {
+						enemy1.dx = 1800;
+						enemy1.dy = losuj_dy();
+						player.zycia--;
 				}
-				if (zderzenie(enemy2, player.x, player.y)) {
-					enemy2.dx = 2000;
-					enemy2.dy = losuj_dy();
-					player.zycia--;
+				if (zderzenie(enemy2, player.x, player.y) && !shield.aktywna) {
+						enemy2.dx = 2000;
+						enemy2.dy = losuj_dy();
+						player.zycia--;
 				}
-				if (zderzenie(enemy3, player.x, player.y)) {
-					enemy3.dx = 2200;
-					enemy3.dy = losuj_dy();
-					player.zycia--;
+				if (zderzenie(enemy3, player.x, player.y) && !shield.aktywna) {
+						enemy3.dx = 2200;
+						enemy3.dy = losuj_dy();
+						player.zycia--;
 				}
 
 				//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
@@ -294,6 +298,8 @@ int main()
 
 			if(beer.ruch)
 				beer.dx -= enemy1.vdx;
+			if (shield.ruch)
+				shield.dx -= enemy1.vdx;
 
 			if (redraw && al_is_event_queue_empty(queue)) {
 				// EDIT !!!!!! JUZ OGARNIAM LOL, Po prostu wartosci od naszych zmiennych (wspolrzedne rozne etc) dalej normalnie sie zmienialy i wgl,
@@ -337,14 +343,19 @@ int main()
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 140, 840, 150, 70, 0);
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 140, 840, 150, 70, 0);
 						// JetPackMan
-						al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
-						//al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						if(shield.aktywna)
+							al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.3), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						else
+							al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						
 						// Enemies 
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy2.dx, enemy2.dy, 340, 340, 0);
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
 						// Piwo
 						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, beer.dx, beer.dy, 120, 180, 0);
+						//Tarcza
+						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, shield.dx, shield.dy, 120, 180, 2);
 						// Serca
 						if (player.zycia == 3) {
 							al_draw_tinted_scaled_bitmap(serca3, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
