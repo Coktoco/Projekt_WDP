@@ -25,8 +25,14 @@ struct Przeciwnik { //wspolrzedne i predkosc przeciwnika
 struct Piwo {
 	int dx;
 	int dy;
-	int pkt_spawn;
+	int klatki_spawn; //co ile klatek ma sie piwo spawnowac w danym momencie
+	bool piwo_ruch = false; //czy piwo ma sie poruszac w danym momencie
 };
+
+int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roznych wysokosciach
+	int dy = rand() % (950-340);
+	return dy;
+}
 
 bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzenie z konkretnym przeciwnikiem
 	if ((x + 140 > p.dx && x + 140 < p.dx + 170) && (y + 140 > p.dy && y + 140 < p.dy + 340))
@@ -36,15 +42,10 @@ bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzeni
 }
 
 bool zderzenie_piwo(struct Piwo p, int x, int y) {
-	if ((x + 140 > p.dx && x + 140 < p.dx + 120) && (y + 140 > p.dy && y + 140 < p.dy + 180))
+	if ((x + 140 > p.dx-60 && x + 140 < p.dx + 120+60) && (y + 140 > p.dy-60 && y + 140 < p.dy + 180+60))
 		return true;
 	else
 		return false;
-}
-
-int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roznych wysokosciach
-	int dy = rand() % (950-340);
-	return dy;
 }
 
 int main()
@@ -90,8 +91,6 @@ int main()
 	ALLEGRO_BITMAP* serca3 = al_load_bitmap("3serca.png");
 
 
-
-
 	al_register_event_source(queue, al_get_keyboard_event_source());
 	al_register_event_source(queue, al_get_display_event_source(disp));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
@@ -111,7 +110,7 @@ int main()
 	bool done = false;
 	ALLEGRO_EVENT event;
 
-	int counter = 0; //licznik fps
+	int counter = 0; //licznik klatek
 	unsigned char key[ALLEGRO_KEY_MAX];
 	memset(key, 0, sizeof(key));
 	 
@@ -171,10 +170,24 @@ int main()
 					ek = 1;
 
 				//spawnowanie piwa
-				beer.pkt_spawn = (rand() % 30) + 1;
-				if(player.pkt % beer.pkt_spawn == 0 && (beer.dx < 0 && beer.dx > 1800)) {
+				beer.klatki_spawn = (rand() % 600) + 600;
+				if(counter % beer.klatki_spawn == 0) {
 					beer.dx = 1800;
 					beer.dy = losuj_dy();
+					beer.piwo_ruch = true;
+				}
+				if (beer.dx < -120) {
+					beer.dx = 1800;
+					beer.dy = losuj_dy();
+					beer.piwo_ruch = false;
+				}
+				if (zderzenie_piwo(beer, player.x, player.y)) {
+					if (player.zycia < 3) {
+						beer.piwo_ruch = false;
+						beer.dx = 1800;
+						beer.dy = losuj_dy();
+						player.zycia++;
+					}
 				}
 
 				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
@@ -191,7 +204,7 @@ int main()
 					enemy3.dy = losuj_dy();
 				}
 			
-				//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci zycie 
+				//jesli nastapilo zderzenie to wrog sie respawnuje z prawej, a gracz traci jedno zycie
 				if (zderzenie(enemy1, player.x, player.y)) {
 					enemy1.dx = 1800;
 					enemy1.dy = losuj_dy();
@@ -207,17 +220,12 @@ int main()
 					enemy3.dy = losuj_dy();
 					player.zycia--;
 				}
-				if(zderzenie_piwo(beer, player.x, player.y)) {
-					if(player.zycia < 3) {
-						player.zycia++;
-					}
-				}
 
 				//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
 				// if (player.zycia <= 0)
 				//	done = true;
 
-				//granice mapy na oko, jesli gracz je przekroczy to od razu przegrywa
+				//blokowanie gracza zeby nie przekroczyl granic mapy
 				if (player.y < 0)
 					player.y = 0;
 				if (player.y > 950 - 280)
@@ -246,7 +254,9 @@ int main()
 			enemy1.dx -= enemy1.vdx;
 			enemy2.dx -= enemy2.vdx;
 			enemy3.dx -= enemy3.vdx;
-			beer.dx -= enemy1.vdx;
+
+			if(beer.piwo_ruch)
+				beer.dx -= enemy1.vdx;
 
 			if (redraw && al_is_event_queue_empty(queue)) {
 				// EDIT !!!!!! JUZ OGARNIAM LOL, Po prostu wartosci od naszych zmiennych (wspolrzedne rozne etc) dalej normalnie sie zmienialy i wgl,
