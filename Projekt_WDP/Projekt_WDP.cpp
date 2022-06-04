@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <ctime>
@@ -90,11 +91,14 @@ int main()
 	al_install_keyboard();
 	al_init_image_addon();
 	al_init_primitives_addon();
+	al_init_ttf_addon();
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_DISPLAY* disp = al_create_display(1800, 950);
 	ALLEGRO_FONT* font = al_create_builtin_font();
+	ALLEGRO_FONT* font2 = al_load_ttf_font("pixelated.ttf", 150, 0);
+	// 	ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 150, 0); // Alternatywny font 
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy_v2.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
@@ -125,6 +129,9 @@ int main()
 
 	// Zmienna ekranu
 	int ek = 0;
+
+	// Zmienna wynik koncowy
+	int wynik = 0;
 
 	// Bool Epiwo Easter Egg
 	int e = 0;
@@ -343,7 +350,10 @@ int main()
 				}
 				else {
 					if (player.zycia <= 0) {
+						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
 						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
+						al_draw_textf(font2, al_map_rgb(255, 255, 255), 1200, 640, 0, "%d", wynik);
+
 
 						//zapisywanie nowego rekordu do pliku 
 						/*FILE* plik = fopen_s("highscore.txt", "r+");
@@ -365,7 +375,6 @@ int main()
 						if (shield.aktywna && epiwo == 0) {
 							al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.3), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						}
-						// Else if poniewaz samo else nie dzialalo poprawnie, tarcza sie nie konczyla (?)
 						else if (epiwo == 0) {
 							al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
 							al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
@@ -396,6 +405,8 @@ int main()
 						al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
 						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 50, 0, "Score: %d", player.pkt);
 						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
+						// Ustawiamy aktualny Player.score na zmienna wynik
+							wynik = player.pkt;
 					}
 					al_flip_display();
 				}
@@ -416,6 +427,7 @@ int main()
 			xb1 = 0;
 			xb2 = 1800;
 		}
+
 	}
 
 	al_destroy_bitmap(jetpack);
