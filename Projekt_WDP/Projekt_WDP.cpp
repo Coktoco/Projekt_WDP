@@ -115,7 +115,7 @@ int main()
 	al_register_event_source(queue, al_get_display_event_source(disp));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
-
+	//wspolrzedne ekranow
 	int xb1 = 0;
 	int xb2 = 1800;
 
@@ -229,7 +229,7 @@ int main()
 					beer.ruch = false; //piwo ma sie pojawic za ekranem, ale ma sie nie ruszac dopoki nie zostanie wylosowane 
 				}
 				if (zderzenie_piwo(beer, player.x, player.y)) {
-					if (player.zycia < 3) {
+					if (player.zycia < 3 && player.zycia > 0) {
 						beer.dx = 1800;
 						beer.dy = losuj_dy();
 						beer.ruch = false; //piwo ma sie pojawic za ekranem, ale ma sie nie ruszac dopoki nie zostanie wylosowane 
@@ -256,7 +256,7 @@ int main()
 					shield.dy = losuj_dy();
 					shield.ruch = false;
 				}
-				if (counter - shield.czas_start == 300) //jesli minelo 5 sekund to tarcza sie deaktywuje
+				if (counter - shield.czas_start >= 300) //jesli minelo 5 sekund to tarcza sie deaktywuje
 					shield.aktywna = false;
 
 				//jesli wrog wyszedl za lewa krawedz mapy to spawnuje sie z powrotem z prawej strony
@@ -289,10 +289,6 @@ int main()
 						enemy3.dy = losuj_dy();
 						player.zycia--;
 				}
-
-				//jesli gracz traci wszystkie zycia to wychodzimy z petli i koniec
-				// if (player.zycia <= 0)
-				//	done = true;
 
 				//blokowanie gracza zeby nie przekroczyl granic mapy
 				if (player.y < 0)
