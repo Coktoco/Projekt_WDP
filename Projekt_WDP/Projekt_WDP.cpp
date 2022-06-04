@@ -126,6 +126,14 @@ int main()
 	// Zmienna ekranu
 	int ek = 0;
 
+	// Bool Epiwo Easter Egg
+	int e = 0;
+	int p = 0;
+	int i = 0;
+	int w = 0;
+	int o = 0;
+	int epiwo = 0;
+
 	bool redraw = true;
 	bool done = false;
 	ALLEGRO_EVENT event;
@@ -145,7 +153,6 @@ int main()
 		printf("Nie udalo sie zaladowac zdjecia!\n");
 		return 1;
 	}
-
 
 	al_start_timer(timer);
 	while (1) {
@@ -189,6 +196,25 @@ int main()
 				if (key[ALLEGRO_KEY_ENTER])
 					ek = 1;
 
+				// Aktywacja Easter Egga
+				if (key[ALLEGRO_KEY_E])
+					e = 1;
+				if (key[ALLEGRO_KEY_P]) {
+					if (e == 1)
+						p = 1;
+				}
+				if (key[ALLEGRO_KEY_I]) {
+					if (e == 1 && p == 1)
+						i = true;
+				}
+				if (key[ALLEGRO_KEY_W]) {
+					if (e == 1 && p == 1 && i == 1)
+						w = 1;
+				}
+				if (key[ALLEGRO_KEY_O]) {
+					if (e == 1 && p == 1 && i == 1 && w == 1)
+						epiwo = 1;
+				}
 				//spawnowanie piwa
 				//beer.klatki_spawn = (rand() % 600) + 600;
 				beer.spawn = rand() % 1000; //losowanie liczby od 0 do 999
@@ -322,7 +348,6 @@ int main()
 				else {
 					if (player.zycia <= 0) {
 						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
-						player.zycia = 0;
 
 						//zapisywanie nowego rekordu do pliku 
 						/*FILE* plik = fopen_s("highscore.txt", "r+");
@@ -341,13 +366,18 @@ int main()
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy2.dx + 95, 840, 150, 70, 0);
 						al_draw_tinted_scaled_bitmap(cien_enemy, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 750, 350, enemy3.dx + 95, 840, 150, 70, 0);
 						// JetPackMan
-						if (shield.aktywna) {
+						if (shield.aktywna && epiwo == 0) {
 							al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.3), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						}
 						// Else if poniewaz samo else nie dzialalo poprawnie, tarcza sie nie konczyla (?)
-						else  {
+						else if (epiwo == 0) {
 							al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
 							al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
+						}
+						// Easter Egg
+						if (epiwo == 1) {
+							al_draw_tinted_scaled_bitmap(piwo, al_map_rgba_f(1, 1, 1, 1), 0, 0, 866, 883, player.x, player.y, 400, 400, 0);
+							player.zycia = 1;
 						}
 						// Enemies 
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy1.dx, enemy1.dy, 340, 340, 0);
