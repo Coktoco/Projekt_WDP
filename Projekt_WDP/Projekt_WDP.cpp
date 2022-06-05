@@ -6,6 +6,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <ctime>
+#define __STDC_WANT_LIB_EXT1__ 1
 
 struct Gracz {
 	float x = 0; //wspolrzedne gracza
@@ -119,6 +120,8 @@ int main()
 	al_register_event_source(queue, al_get_display_event_source(disp));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
+	bool game_over = false;
+	bool trzeba_zapisac = true;;
 	//wspolrzedne ekranow
 	int xb1 = 0;
 	int xb2 = 1800;
@@ -350,18 +353,30 @@ int main()
 				}
 				else {
 					if (player.zycia <= 0) {
+						game_over = true;
 						al_draw_scaled_bitmap(background, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
 						al_draw_scaled_bitmap(ekran_koniec, 0, 0, 1920, 1080, 0, 0, 1800, 950, 0);
 						al_draw_textf(font2, al_map_rgb(255, 255, 255), 1200, 640, 0, "%d", wynik);
 
+						//zapisywanie nowego rekordu do pliku
+						if (trzeba_zapisac) {
+							trzeba_zapisac = false;
 
-						//zapisywanie nowego rekordu do pliku 
-						/*FILE* plik = fopen_s("highscore.txt", "r+");
-						int bufor; //bufor do zmiennej z pliku
-						fscanf_s(plik, "%d", bufor);
-						if (player.highscore > bufor)
-							fprintf(plik,"%d",player.highscore);
-						fclose(plik);*/
+							FILE* plik = fopen("highscore.txt", "r");
+							if (plik == 0)
+								printf("Nie udalo sie otworzyc pliku\n");
+
+							int bufor; //bufor do zmiennej z pliku
+							fscanf(plik, "%d", &bufor);
+							fclose(plik);
+
+							if (player.highscore > bufor) {
+								plik = fopen("highscore.txt", "w");
+								fprintf(plik, "%d", player.highscore);
+								fclose(plik);
+							}
+						}
+						
 					}
 					else {
 						al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -413,12 +428,14 @@ int main()
 					redraw = false;
 			}
 		//liczymy fpsy
-		counter++;
-		//liczymy sekundy
-		if (counter % 60 == 0) {
-			player.pkt++; //kazda sekunda to +1 pkt dla gracza
-			if (player.pkt > player.highscore)
-				player.highscore = player.pkt;
+		if (!game_over) {
+			counter++;
+			//liczymy sekundy
+			if (counter % 60 == 0) {
+				player.pkt++; //kazda sekunda to +1 pkt dla gracza
+				if (player.pkt > player.highscore)
+					player.highscore = player.pkt;
+			}
 		}
 		// Przesuwanie tla
 		xb1-=5;
