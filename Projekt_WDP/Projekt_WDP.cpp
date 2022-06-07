@@ -6,7 +6,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <ctime>
-#define __STDC_WANT_LIB_EXT1__ 1
+//#define __STDC_WANT_LIB_EXT1__ 1
 
 struct Gracz {
 	float x = 0; //wspolrzedne gracza
@@ -98,8 +98,8 @@ int main()
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
 	ALLEGRO_DISPLAY* disp = al_create_display(1800, 950);
 	ALLEGRO_FONT* font = al_create_builtin_font();
-	ALLEGRO_FONT* font2 = al_load_ttf_font("pixelated.ttf", 150, 0);
-	// 	ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 150, 0); // Alternatywny font 
+	// ALLEGRO_FONT* font2 = al_load_ttf_font("pixelated.ttf", 150, 0);
+	ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 150, 0); // Alternatywny font 
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy_v2.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
@@ -143,6 +143,9 @@ int main()
 	int w = 0;
 	int o = 0;
 	int epiwo = 0;
+
+	// Int od opadania
+	int opad = 0;
 
 	bool redraw = true;
 	bool done = false;
@@ -195,7 +198,12 @@ int main()
 						h_c+=1;
 						if (h_c > 100)
 							h_c = 100;
+
+						// OPAD
+						opad = 0;
 				}
+				// OPAD MECHANIKA
+				opad = 1;
 				if (key[ALLEGRO_KEY_RIGHT]) 
 					player.x += player.vx;
 				if (key[ALLEGRO_KEY_LEFT])
@@ -215,7 +223,7 @@ int main()
 				}
 				if (key[ALLEGRO_KEY_I]) {
 					if (e == 1 && p == 1)
-						i = true;
+						i = 1;
 				}
 				if (key[ALLEGRO_KEY_W]) {
 					if (e == 1 && p == 1 && i == 1)
@@ -390,13 +398,13 @@ int main()
 						if (shield.aktywna && epiwo == 0) {
 							al_draw_tinted_scaled_bitmap(jetpack, al_map_rgba_f(1, 1, 1, 0.3), 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						}
-						else if (epiwo == 0) {
+						else if (epiwo == 0) { 
 							al_draw_tinted_scaled_bitmap(cien_jetpack, al_map_rgba_f(1, 1, 1, 0.5), 0, 0, 960, 320, player.x + 20, yc, w_c, h_c, 0);
 							al_draw_scaled_bitmap(jetpack, 0, 0, 866, 883, player.x, player.y, 280, 280, 0);
 						}
 						// Easter Egg
 						if (epiwo == 1) {
-							al_draw_tinted_scaled_bitmap(piwo, al_map_rgba_f(1, 1, 1, 1), 0, 0, 866, 883, player.x, player.y, 400, 400, 0);
+							al_draw_tinted_scaled_bitmap(piwo, al_map_rgba_f(1, 1, 1, 1), 0, 0, 254, 367, player.x, player.y, 260, 280, 0);
 							player.zycia = 1;
 						}
 						// Enemies 
