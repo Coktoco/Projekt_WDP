@@ -444,7 +444,14 @@ int main()
 				if (player.pkt > player.highscore)
 					player.highscore = player.pkt;
 			}
+			
 		}
+			// Nowy system zmiany poziomu trudności
+			if (counter % 3000 == 0) {
+				enemy1.vdx = enemy1.vdx + 1;
+				enemy2.vdx = enemy2.vdx + 1;
+				enemy3.vdx = enemy3.vdx + 1;
+			}
 		// Przesuwanie tla
 		xb1-=5;
 		xb2-=5;
