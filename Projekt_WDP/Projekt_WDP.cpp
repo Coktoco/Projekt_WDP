@@ -449,7 +449,7 @@ int main()
 			
 		}
 			
-			// Nowy system zmiany poziomu trudności
+			// Nowy system zmiany poziomu trudności TESTETESTESTTS
 			if (counter % 3000 == 0) {
 				enemy1.vdx = enemy1.vdx + 1;
 				enemy2.vdx = enemy2.vdx + 1;
