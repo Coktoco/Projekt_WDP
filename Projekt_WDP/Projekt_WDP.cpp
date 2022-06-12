@@ -100,6 +100,7 @@ int main()
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	// ALLEGRO_FONT* font2 = al_load_ttf_font("pixelated.ttf", 150, 0);
 	ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 150, 0); // Alternatywny font 
+	ALLEGRO_FONT* font_MAIN = al_load_ttf_font("YARDSALE.ttf", 80, 0); // Alternatywny font 
 	ALLEGRO_BITMAP* background = al_load_bitmap("Background_v2.png");
 	ALLEGRO_BITMAP* enemy = al_load_bitmap("Enemy_v2.png");
 	ALLEGRO_BITMAP* jetpack = al_load_bitmap("jetpackman_v2.png");
@@ -413,7 +414,7 @@ int main()
 						al_draw_scaled_bitmap(enemy, 0, 0, 1000, 1000, enemy3.dx, enemy3.dy, 340, 340, 0);
 						// Piwo
 						al_draw_scaled_bitmap(piwo, 0, 0, 254, 367, beer.dx, beer.dy, 120, 180, 0);
-						//Tarcza
+						// Tarcza
 						al_draw_scaled_bitmap(shield1, 0, 0, 508, 734, shield.dx, shield.dy, 140, 180, 0);
 						// Serca
 						if (player.zycia == 3) {
@@ -425,9 +426,10 @@ int main()
 						if (player.zycia == 1) {
 							al_draw_tinted_scaled_bitmap(serca1, al_map_rgba_f(1, 1, 1, 0.8), 0, 0, 1800, 950, 0, 170, 1360, 800, 0);
 						}
-						al_draw_text(font, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
-						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 50, 0, "Score: %d", player.pkt);
-						al_draw_textf(font, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
+						// Napisy na ekranie
+						// al_draw_text(font_MAIN, al_map_rgb(255, 255, 255), 40, 25, 0, "EPIc Adventure");
+						al_draw_textf(font_MAIN, al_map_rgb(255, 255, 255), 1310, 830, 0, "Score: %d", player.pkt);
+						// al_draw_textf(font_MAIN, al_map_rgb(255, 255, 255), 40, 75, 0, "Lives: %d", player.zycia);
 						// Ustawiamy aktualny Player.score na zmienna wynik
 							wynik = player.pkt;
 					}
@@ -446,6 +448,7 @@ int main()
 			}
 			
 		}
+			
 			// Nowy system zmiany poziomu trudności
 			if (counter % 3000 == 0) {
 				enemy1.vdx = enemy1.vdx + 1;
