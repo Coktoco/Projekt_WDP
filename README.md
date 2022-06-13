@@ -34,6 +34,7 @@ W grze występują dwa rodzaje „Power-Upów”:
 - Rozbudowane power-upy urozmaicające rozgrywkę 
 - Responsywny w czasie rzeczywistym system cieniowania bohatera
 - Zapisywanie najlepszego wyniku do pliku tekstowego
+- Implementacja zaawansowanej fizyki 
 - „Easter Egg” nawiązujący do kierunku studiów
 - Zaawansowana, autorska grafika
 
