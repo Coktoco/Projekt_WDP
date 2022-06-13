@@ -174,69 +174,50 @@ int main()
 				if (key[ALLEGRO_KEY_UP]) {
 					t = 0;
 					player.y -= player.vy;
-						yc -= 2;
-					if (yc < 728) {
-						yc = 728;
-					}
-  					w_c -= 2;
-					if (w_c < 150)
-						w_c = 150;
-					h_c -= 1;
-					if (h_c < 30)
-						h_c = 30;
+						yc -= 3;
+						w_c -= 2;
+						h_c -= 1;
 				}
 				if (key[ALLEGRO_KEY_DOWN]) {
 					player.y += player.vy;
-						yc += 2;
-						if (yc > 860) {
-							yc = 860;
-						}
-						w_c += 2;
-						if (w_c > 300)
-							w_c = 300;
-						h_c+=1;
-						if (h_c > 100)
-							h_c = 100;
 				}
+				if (key[ALLEGRO_KEY_DOWN] || !key[ALLEGRO_KEY_UP]) {
+					yc += 3;
+					w_c += 2;
+					h_c += 1;
+				}
+				//granice cienia
+				if (yc < 728) {
+					yc = 728;
+				}
+				
+				if (w_c < 150)
+					w_c = 150;
+				
+				if (h_c < 30)
+					h_c = 30;
+
+				if (yc > 860) {
+					yc = 860;
+				}
+				
+				if (w_c > 300)
+					w_c = 300;
+				
+				if (h_c > 100)
+					h_c = 100;
 				// OPAD MECHANIKA
 				if (!key[ALLEGRO_KEY_UP]) {
 					t++;
-					yc += 2;
+
 					if (t > 0 && t <= 60) {
 						player.y += 3;
-						if (yc > 860) {
-							yc = 860;
-						}
-						w_c += 2;
-						if (w_c > 300)
-							w_c = 300;
-						h_c += 1;
-						if (h_c > 100)
-							h_c = 100;
 					}
 					if (t > 60 && t <= 120) {
 						player.y += 4;
-						if (yc > 860) {
-							yc = 860;
-						}
-						w_c += 2;
-						if (w_c > 300)
-							w_c = 300;
-						h_c += 1;
-						if (h_c > 100)
-							h_c = 100;
 					}
 					if (t > 120) {
 						player.y += 5;
-						if (yc > 860) {
-							yc = 860;
-						}
-						w_c += 2;
-						if (w_c > 300)
-							w_c = 300;
-						h_c += 1;
-						if (h_c > 100)
-							h_c = 100;
 					}
 				}
 
