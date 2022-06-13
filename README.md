@@ -28,6 +28,7 @@ W grze występują dwa rodzaje „Power-Upów”:
 # 4.2 Funkcje - mechanizm gry
 - Losowo generowani wrogowie, posiadający określone hitboxy
 - Implementacja aktywnego ekranu tytułowego, wraz z ekranem końcowym
+- Progresywnie zwiększający się poziom trudności
 - Zapętlone wyświetlanie tła
 - Responsywnie aktualizujące się elementy graficzne tj. wyświetlanie posiadanej ilości żyć w formie serc na ekranie
 - Rozbudowane power-upy urozmaicające rozgrywkę 
