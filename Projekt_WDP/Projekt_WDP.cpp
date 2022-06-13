@@ -201,12 +201,43 @@ int main()
 				// OPAD MECHANIKA
 				if (!key[ALLEGRO_KEY_UP]) {
 					t++;
-					if(t > 0 && t <= 60)
+					yc += 2;
+					if (t > 0 && t <= 60) {
 						player.y += 3;
-					if (t > 60 && t <= 120)
+						if (yc > 860) {
+							yc = 860;
+						}
+						w_c += 2;
+						if (w_c > 300)
+							w_c = 300;
+						h_c += 1;
+						if (h_c > 100)
+							h_c = 100;
+					}
+					if (t > 60 && t <= 120) {
 						player.y += 4;
-					if (t > 120)
+						if (yc > 860) {
+							yc = 860;
+						}
+						w_c += 2;
+						if (w_c > 300)
+							w_c = 300;
+						h_c += 1;
+						if (h_c > 100)
+							h_c = 100;
+					}
+					if (t > 120) {
 						player.y += 5;
+						if (yc > 860) {
+							yc = 860;
+						}
+						w_c += 2;
+						if (w_c > 300)
+							w_c = 300;
+						h_c += 1;
+						if (h_c > 100)
+							h_c = 100;
+					}
 				}
 
 				if (key[ALLEGRO_KEY_RIGHT]) 
