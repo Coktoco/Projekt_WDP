@@ -6,7 +6,6 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <ctime>
-//#define __STDC_WANT_LIB_EXT1__ 1
 
 struct Gracz {
 	float x = 0; //wspolrzedne gracza
@@ -115,11 +114,12 @@ int main()
 	ALLEGRO_BITMAP* serca3 = al_load_bitmap("3serca.png");
 	ALLEGRO_BITMAP* shield1 = al_load_bitmap("Shield_ghost.png");
 
-
-
 	al_register_event_source(queue, al_get_keyboard_event_source());
 	al_register_event_source(queue, al_get_display_event_source(disp));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
+
+	//zmienna od opadania
+	int t = 0;
 
 	bool game_over = false;
 	bool trzeba_zapisac = true;;
@@ -144,9 +144,6 @@ int main()
 	int w = 0;
 	int o = 0;
 	int epiwo = 0;
-
-	// Int od opadania
-	int opad = 0;
 
 	bool redraw = true;
 	bool done = false;
@@ -175,6 +172,7 @@ int main()
 			switch (event.type) {
 			case ALLEGRO_EVENT_TIMER:
 				if (key[ALLEGRO_KEY_UP]) {
+					t = 0;
 					player.y -= player.vy;
 						yc -= 2;
 					if (yc < 728) {
@@ -199,12 +197,18 @@ int main()
 						h_c+=1;
 						if (h_c > 100)
 							h_c = 100;
-
-						// OPAD
-						opad = 0;
 				}
 				// OPAD MECHANIKA
-				opad = 1;
+				if (!key[ALLEGRO_KEY_UP]) {
+					t++;
+					if(t > 0 && t <= 60)
+						player.y += 3;
+					if (t > 60 && t <= 120)
+						player.y += 4;
+					if (t > 120)
+						player.y += 5;
+				}
+
 				if (key[ALLEGRO_KEY_RIGHT]) 
 					player.x += player.vx;
 				if (key[ALLEGRO_KEY_LEFT])
@@ -449,7 +453,7 @@ int main()
 			
 		}
 			
-			// Nowy system zmiany poziomu trudności TESTETESTESTTS
+			// Nowy system zmiany poziomu trudności
 			if (counter % 3000 == 0) {
 				enemy1.vdx = enemy1.vdx + 1;
 				enemy2.vdx = enemy2.vdx + 1;
