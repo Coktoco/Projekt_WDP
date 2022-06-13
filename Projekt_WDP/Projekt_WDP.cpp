@@ -128,8 +128,8 @@ int main()
 	int xb2 = 1800;
 
 	// Zmienne cienia
-	int yc = 728;
-	int w_c = 150, h_c = 30;
+	float yc = 728;
+	float w_c = 150, h_c = 30;
 
 	// Zmienna ekranu
 	int ek = 0;
@@ -174,18 +174,17 @@ int main()
 				if (key[ALLEGRO_KEY_UP]) {
 					t = 0;
 					player.y -= player.vy;
-						yc -= 3;
-						w_c -= 2;
-						h_c -= 1;
+					yc -= 2;
+					w_c -= 2;
+					h_c -= 1;
 				}
 				if (key[ALLEGRO_KEY_DOWN]) {
 					player.y += player.vy;
+					yc += 1;
+					w_c += 1;
+					h_c += 0.5;
 				}
-				if (key[ALLEGRO_KEY_DOWN] || !key[ALLEGRO_KEY_UP]) {
-					yc += 3;
-					w_c += 2;
-					h_c += 1;
-				}
+				
 				//granice cienia
 				if (yc < 728) {
 					yc = 728;
@@ -209,6 +208,9 @@ int main()
 				// OPAD MECHANIKA
 				if (!key[ALLEGRO_KEY_UP]) {
 					t++;
+					yc += 1;
+					w_c += 1;
+					h_c += 0.5;
 
 					if (t > 0 && t <= 60) {
 						player.y += 3;
