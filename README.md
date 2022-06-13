@@ -38,6 +38,6 @@ W grze występują dwa rodzaje „Power-Upów”:
 - Zaawansowana, autorska grafika
 
 # 5. Cel gry
-Cel gry jest prosty: uzyskać jak największy wynik, unikając wrogów bez utraty wszystkich żyć.
+Cel gry jest prosty: uzyskać jak największy wynik, bez utraty wszystkich żyć.
 - Najlepszy wynik zapisywany jest do pliku „highscore.txt”.
 
