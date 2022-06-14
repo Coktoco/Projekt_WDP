@@ -45,10 +45,11 @@ int losuj_dy() { //losuje wspolrzedna w pionie wrogow, zeby pojawiali sie na roz
 }
 
 bool zderzenie(struct Przeciwnik p, int x, int y) { //sprawdza czy bylo zderzenie z konkretnym przeciwnikiem
-	if ((x + 140 > p.dx && x + 140 < p.dx + 170) && (y + 140 > p.dy && y + 140 < p.dy + 340))
+	 if ((x + 140 > p.dx && x + 140 < p.dx + 170) && (y + 140 > p.dy && y + 140 < p.dy + 340))
 		return true;
-	else
+	 else
 		return false;
+	
 }
 
 bool zderzenie_piwo(struct Piwo p, int x, int y) {
@@ -219,7 +220,7 @@ int main()
 						player.y += 4;
 					}
 					if (t > 120) {
-						player.y += 5;
+						player.y += 6;
 					}
 				}
 
